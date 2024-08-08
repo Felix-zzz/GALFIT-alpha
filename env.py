@@ -24,6 +24,7 @@ def _split_comp(targ_sersic: Sersic, fixed_index: float = None):
 class GalfitEnv:
     def __init__(self, input_file) -> None:
         config = Config(input_file)
+        self._current_state = []
         self._task = GalfitTask(config)
         self._task.init_guess()
         self._update_state()
@@ -31,6 +32,15 @@ class GalfitEnv:
     def _update_state(self):
         self._task.run()
         self._chi2 = self._task.read_component('./galfit.01')
+        self._current_state = [0]
+        # Always assign Sky to the first state index
+        for comp in self._task.components:
+            if isinstance(comp, Sky):
+                self._current_state[0] = comp.state
+            elif isinstance(comp, Sersic):
+                self._current_state.append(comp.state)
+            else:
+                self._current_state.append(-1)
         shutil.rmtree('./galfit.01')
 
     def do_action(self, action: int):
