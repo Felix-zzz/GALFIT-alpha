@@ -50,15 +50,12 @@ class GalfitEnv:
                 if comp.state != action:
                     comp.state = action
                     change_flag = True
-                ################################################
-                # If do not change still need to update action?
                 action -= comp.state_num
-                ################################################
                 break
             action -= comp.state_num
         if action >= 0:
-            for comp in self._task.components: #### Need this loop? ####
-                sersic = _split_comp(self._task.components[action], action % 4)
+            for comp in self._task.components: 
+                sersic = _split_comp(comp, action % 4)
                 if sersic is not None:
                     self._task.add_component(sersic)
                     change_flag = True
@@ -73,4 +70,4 @@ class GalfitEnv:
 
     @property
     def current_state(self):
-        pass
+        return self._current_state
